@@ -5,7 +5,7 @@ interface MusicControlProps {
 }
 
 export const MusicControl: React.FC<MusicControlProps> = ({ audioSrc }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true); // 默认为播放状态
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -15,6 +15,20 @@ export const MusicControl: React.FC<MusicControlProps> = ({ audioSrc }) => {
     audio.loop = true;
     audio.volume = 0.3; // 默认音量 30%
     audioRef.current = audio;
+
+    // 自动播放音乐
+    const playAudio = async () => {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (error) {
+        // 浏览器可能阻止自动播放，用户需要手动点击
+        console.log('自动播放被阻止，需要用户交互后播放');
+        setIsPlaying(false);
+      }
+    };
+
+    playAudio();
 
     return () => {
       audio.pause();
