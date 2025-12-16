@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arix Signature Christmas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body { margin: 0; background: #000; overflow: hidden; }
+      ::-webkit-scrollbar { display: none; }
+      #root { width: 100vw; height: 100vh; }
+      
+      /* Error message styles - visible only if React fails to mount */
+      .startup-error {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #ff4444;
+        font-family: sans-serif;
+        text-align: center;
+        max-width: 600px;
+        line-height: 1.6;
+        background: rgba(20, 0, 0, 0.9);
+        padding: 40px;
+        border: 1px solid #ff4444;
+        border-radius: 8px;
+        z-index: 9999;
+        display: none; /* Hidden by default */
+      }
+      .startup-error h2 { margin-top: 0; color: #fff; }
+      .startup-error code { background: #333; padding: 4px 8px; border-radius: 4px; color: #ffd700; display: block; margin: 10px 0; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react/": "https://esm.sh/react@18.3.1/",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "three": "https://esm.sh/three@0.160.0",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.15.16?external=react,react-dom,three",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@9.99.0?external=react,react-dom,three,@react-three/fiber",
+    "@react-three/postprocessing": "https://esm.sh/@react-three/postprocessing@2.16.0?external=react,react-dom,three,@react-three/fiber",
+    "uuid": "https://esm.sh/uuid@9.0.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@mediapipe/tasks-vision": "https://esm.sh/@mediapipe/tasks-vision@^0.10.22-rc.20250304"
+  }
+}
+</script>
+<!-- Babel Standalone for in-browser TSX compilation -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="stylesheet" href="/src/index.css">
+</head>
+  <body>
+    <div id="root">
+       <!-- Error Message Container -->
+       <div id="error-msg" class="startup-error">
+        <h2>⚠️ Application Failed to Load</h2>
+        <div id="error-content"></div>
+      </div>
+    </div>
+
+    <!-- Error Handler Script -->
+    <script>
+      window.addEventListener('error', function(e) {
+        const errorMsg = document.getElementById('error-msg');
+        const errorContent = document.getElementById('error-content');
+        if (errorMsg && errorContent) {
+          errorMsg.style.display = 'block';
+          
+          let message = "<p>Unknown error occurred.</p>";
+          
+          if (e.message.includes('MIME type') || e.message.includes('module')) {
+             message = `
+               <p><strong>MIME Type Error Detected</strong></p>
+               <p>The server is not sending .tsx/.ts files as JavaScript.</p>
+               <hr style="border-color: #333; margin: 15px 0;"/>
+               <p style="color:white">Please stop the current server and run:</p>
+               <code>python3 service_2.py</code>
+             `;
+          } else if (window.location.protocol === 'file:') {
+             message = `
+               <p><strong>CORS / File Protocol Error</strong></p>
+               <p>You cannot run this directly from the file system.</p>
+               <p style="color:white">Please run the local server:</p>
+               <code>python3 service_2.py</code>
+             `;
+          } else {
+             message = `<p>${e.message}</p>`;
+          }
+          
+          errorContent.innerHTML = message;
+        }
+      }, true); // Capture phase to catch resource loading errors
+    </script>
+    
+    <!-- Load the main entry point -->
+    <script type="module">
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
+      import App from './App.tsx';
+      
+      ReactDOM.createRoot(document.getElementById('root')).render(
+        React.createElement(React.StrictMode, null,
+          React.createElement(App, null)
+        )
+      );
+    </script>
+</body>
+</html>
